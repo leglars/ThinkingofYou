@@ -1,0 +1,16 @@
+{
+  "name": "thinkingofyou-automessage",
+  "version": "0.0.1",
+  "description": "This is an auto message app to help sending and receiving sms to audiences.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "leglars",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
+    "twilio": "^2.9.1"
+  }
+}
