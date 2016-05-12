@@ -4,6 +4,9 @@ var sendMessage = require('./sendMessage');
 var dbAPI = require('./databaseApi');
 var twilio = require('twilio');
 
+var firebase = require('firebase');
+var myFirebaseRef = new firebase("https://burning-heat-7654.firebaseio.com/");
+
 var express = require('express'),
 	bodyParser = require('body-parser');
 
@@ -22,7 +25,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.get('/', function(req, res){
-	res.send('Hello world!');
+	res.render('index');
 });
 
 app.get('/send', function(req, res){
@@ -34,7 +37,10 @@ app.get('/send', function(req, res){
 });
 
 app.get('/contact', function(req, res){
-    console.log(dbAPI.getNameByNumber("+61478416802"));
+	var query = 'contact/' + "+61478416802" + '/name';
+	myFirebaseRef.child(query).on('value', function (name) {
+		res.send(name.val());
+	});
 });
 
 app.post('/incoming', function(req, res){
