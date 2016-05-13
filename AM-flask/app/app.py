@@ -3,12 +3,14 @@ import twilio.twiml
 from firebase import firebase
 fb = firebase.FirebaseApplication("https://burning-heat-7654.firebaseio.com/", None)
 import send_sms
+import firebase_logging as log
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def hello_world():
+    log.query_builder('yi', "jolly")
     return 'Hello World!'
 
 
@@ -22,46 +24,25 @@ def hello():
 @app.route("/income", methods=['GET', 'POST'])
 def reply():
 
-    from_num = request.values.get('From', None)
-    from_num = "+" + str(from_num).strip()
+    from_num = "+" + str(request.values.get('From', None)).strip()
     # the number get from http is " 61400111222"
-    text = request.values.get('Body', None)
-    text = str(text)
+    text = str(request.values.get('Body', None))
     data = fb.get("/contact", None)
 
     # if not data[from_num]:
     #     send_sms.error_response_number(text, from_num)
 
-    name = data[from_num]["name"]
+    contact = data[from_num]["name"]
     user = data[from_num]["user"]
 
-    text_s = text.split(' ')  # place here because error catch need a full text string
-
-    i = 0
-    yes = ["yes", "Yes", "YES"]
-    no = ["no", "No", "NO"]
-
-    query = "/logging/week1/day1/" + user + "/" + name + "/"
-
-    for word in text_s:
-        if word in yes or word in no:
-            if word in yes:
-                connected = 1
-            else:
-                connected = 0
-
-            fb.patch(query, {'connected': connected})
-            # fb.post_async(query, data)
-            return "send q2 and connected yes"
-
-        elif word == "time" or word == "times":
-            time = int(text[i-1])
-            fb.patch(query, {'time': time})
-            # fb.put(query, "123", {'time': time})    #  put is work too
-            return "time yes"
-        i += 1
-    # send_sms.error_response_warning(text)
-    return "error response warning"
+    log_result = log.daily_logging(user, contact, text)
+    if log_result == 1:
+        pass
+    elif log_result == 2:
+        pass
+    elif not log_result:
+        # send_sms.error_response_warning(text)
+        return "error response warning"
 
 
 if __name__ == '__main__':
