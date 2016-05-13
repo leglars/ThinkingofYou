@@ -4,3 +4,4 @@
 AM-flask/Include
 AM-flask/Lib
 AM-flask/Scripts
+*.pyc
