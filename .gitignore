@@ -4,4 +4,5 @@
 AM-flask/Include
 AM-flask/Lib
 AM-flask/Scripts
+AM-flask/app/__pycache__
 *.pyc
