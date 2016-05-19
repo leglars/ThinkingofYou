@@ -1,8 +1,7 @@
-from flask import Flask, redirect, request
-import twilio.twiml
+from flask import Flask, redirect, request, render_template
 from firebase import firebase
 fb = firebase.FirebaseApplication("https://burning-heat-7654.firebaseio.com/", None)
-import send_sms
+# import send_sms
 import firebase_logging as log
 
 app = Flask(__name__)
@@ -10,15 +9,17 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    log.query_builder('yi', "jolly")
-    return 'Hello World!'
+    # log.query_builder('yi', "jolly")
+    # return 'Hello World!'
+    return render_template("index.html")
 
 
 @app.route("/receive", methods=['GET', 'POST'])
 def hello():
-    resp = twilio.twiml.Response()
-    resp.message("hello, this is haha")
-    return str(resp)
+    pass
+    # resp = twilio.twiml.Response()
+    # resp.message("hello, this is haha")
+    # return str(resp)
 
 
 @app.route("/income", methods=['GET', 'POST'])
