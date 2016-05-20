@@ -1,3 +1,8 @@
+{% import 'form.html' as form %}
 {% include "header.html" %}
-
+    <form>
+        {{ form.label('The content of message: ') }}
+        {{ form.input('content') }}
+        {{ form.input('submit', type='submit', value='submit') }}
+    </form>
 {% include "footer.html"%}
