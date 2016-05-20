@@ -46,6 +46,31 @@ def reply():
         return "error response warning"
 
 
+    # Message UUID for which the details will be retrieved
+    params = {'message_uuid': '0936ec98-7c4c-11e4-9bd8-22000afa12b9'}
+    # Fetch the details
+    response = p.get_message(params)
+
+
+    @app.route("/delivery_report/", methods=['GET', 'POST'])
+    def report():
+        # Sender's phone number
+        from_number = request.values.get('From')
+        # Receiver's phone number - Plivo number
+        to_number = request.values.get('To')
+        # Status of the message
+        status = request.values.get('Status')
+        # Message UUID
+        uuid = request.values.get('MessageUUID')
+
+        if status != "delivered":
+            pass
+
+        # Prints the status of the message
+        print ("From: %s, To: %s, Status: %s, MessageUUID: %s" % (from_number, to_number, status, uuid))
+        return "Delivery status reported"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
     # app.run()

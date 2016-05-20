@@ -46,3 +46,8 @@ def query_builder(user, contact):
         day = str(delta % 7 + 1)
         query += "week" + week + "/day" + day + "/" + postfix_query
     return query
+
+
+def status_logging():
+    pass
+# may need a new query builder. the path could be /logging/na

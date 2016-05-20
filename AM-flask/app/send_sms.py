@@ -36,17 +36,35 @@ def send_message(to, question):
 def error_response_warning(error, user, name, question):
     error_body = "User " + user + "'s contact " + name + " may arouse a wrong response for question " + question \
                  + "\nThe response is here: " + error
-    client.messages.create(
-        to=_ADMIN_NUMBER,
-        from_=_SERVICE_NUMBER,
-        body=error_body
-    )
+
+    params = {
+        'src': _SERVICE_NUMBER,
+        'dst': _ADMIN_NUMBER,
+        'text': error_body,
+        # 'url': "http://thinkingofyou.uqcloud.net/automessage/report",
+        'method': "POST"
+    }
+
+    # client.messages.create(
+    #     to=_ADMIN_NUMBER,
+    #     from_=_SERVICE_NUMBER,
+    #     body=error_body
+    # )
 
 
 def error_response_number(text, number):
     error_body = "Get a response from an unknown number: " + number + "\nThe content is here: " + text
-    client.messages.create(
-        to=_ADMIN_NUMBER,
-        from_=_SERVICE_NUMBER,
-        body=error_body
-    )
+
+    params = {
+        'src': _SERVICE_NUMBER,
+        'dst': _ADMIN_NUMBER,
+        'text': error_body,
+        # 'url': "http://thinkingofyou.uqcloud.net/automessage/report",
+        'method': "POST"
+    }
+
+    # client.messages.create(
+    #     to=_ADMIN_NUMBER,
+    #     from_=_SERVICE_NUMBER,
+    #     body=error_body
+    # )
