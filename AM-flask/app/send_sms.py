@@ -55,15 +55,19 @@ def reply_message(from_number, text="Thanks, we've received your message.", to_n
                         service number, so this parameter would be useful to identify
     """
     params = {
-      "src": to_number,
-      "dst": from_number,
+        "src": to_number,
+        "dst": from_number,
+        "text": text,
+        "method": "POST"
     }
 
-    # Generate a Message XML with the details of
-    # the reply to be sent.
-    r = plivoxml.Response()
-    r.addMessage(text, **params)
-    return r.to_xml()
+    # # Generate a Message XML with the details of
+    # # the reply to be sent.
+    # r = plivoxml.Response()
+    # r.addMessage(text, **params)
+
+    response = p.send_message(params)
+    return response
 
 
 def error_response_warning(error, user, name, question):
