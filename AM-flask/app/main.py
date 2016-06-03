@@ -20,35 +20,29 @@ def hello_world():
 def send_message():
 
     res = send_sms.send_message()
-    print(res)
+    return "a message be sent"
 
 
 @app.route("/receive", methods=['GET', 'POST'])
 def receive():
     pass
-    # resp = twilio.twiml.Response()
-    # resp.message("hello, this is haha")
-    # return str(resp)
 
 
 @app.route("/income", methods=['GET', 'POST'])
 def reply():
 
-    def logger(context_data):
-        if not context_data[from_num]:
-            send_sms.error_response_number(text, from_num)
-
-        contact = context_data[from_num]["name"]
-        user = context_data[from_num]["user"]
-
-        log_result = log.daily_logging(user, contact, text)
-        if log_result == 1:
+    def logger(from_number, response):
+        data = fb.get("/contact", None)
+        if not data[from_number]:
             pass
-        elif log_result == 2:
-            pass
-        elif not log_result:
-            # send_sms.error_response_warning(text)
-            return "error response warning"
+            # send_sms.error_response_number(response, from_number)
+
+        contact = data[from_number]["name"]
+        user = data[from_number]["user"]
+
+        if log.daily_logging(user, contact, from_number, response):
+            return True
+        return False
 
     """
     POST /income HTTP/1.1
@@ -64,26 +58,21 @@ def reply():
 
     To=61429968959&From=61478417108&TotalRate=0&Units=1&Text=How+are+you&TotalAmount=0&Type=sms&MessageUUID=ca425462-27f0-11e6-890b-22000ae90d37
     """
-    from_num = request.values.get('From', None)
-    text = str(request.values.get('Text', None))
+    try:
+        from_num = "+" + request.values.get('From', None)
+        text = str(request.values.get('Text', None))
 
-    data = fb.get("/contact", None)
+        if logger(from_num, text):
+            res = send_sms.reply_message(from_num)
+            return "replied"
 
-    logger(data)
-
-
-
-    response = "we got your message: " + text
-    # res = send_sms.reply_message(from_num, response)
-    res = send_sms.send_message(from_num, response)
-
-    print(res)
-    print(type(res))
-    return "replied"
+        response = "Sorry, we got some problems. Could you resend you response to us again. Thank you"
+        res = send_sms.reply_message(from_num, response)
+        return "fail to record"
+    except:
+        return "reply module failure"
 
 
-    #
-    #
     # # Message UUID for which the details will be retrieved
     # params = {'message_uuid': '0936ec98-7c4c-11e4-9bd8-22000afa12b9'}
     # # Fetch the details
