@@ -49,9 +49,17 @@ def generate_query_by_time(query, contact):
     query += contact + "/dailyMessage/"
 
     try:
-        delta = int(str(get_date() - get_start_date(contact)).split(' ')[0])
-    except TypeError:
-        return "the contact hasn't initialize the evaluation"
+        delta_string = str(get_date() - get_start_date(contact)).split(' ')[0]
+        delta = int(delta_string)
+    except TypeError as err:
+        print("the contact hasn't initialize the evaluation: ", err)
+        return None, err
+    except ValueError as err:
+        if delta_string == "0:00:00":
+            delta = 0
+        else:
+            print("the date has some problem: ", err)
+            return None, err
 
     if delta <= 0:
         query += "week1/day1"
@@ -121,6 +129,9 @@ def daily_message_logger(contact, text):
     base_query = "/logging/response/"
     query = generate_query_by_time(base_query, contact)
 
+    if not query[0]:
+        raise Exception("query module report an error")
+
     times, is_connected = text_parse(text)
 
     data = {
@@ -149,7 +160,8 @@ def daily_logging(user, contact, number, text):
 
         daily_message_logger(contact, text)
         return True
-    except:
+    except Exception as err:
+        print("Handling unknown error:  ", err)
         return False
 
 
