@@ -3,12 +3,12 @@ fb = firebase.FirebaseApplication("https://burning-heat-7654.firebaseio.com/", N
 
 
 def contact_list_extractor(group="default"):
-    contact_list = []
+    contact_list = {}
     user_data = fb.get("/user", None)
 
     if group == "default":
-        contact_list.append(extract_user_contact(user_data))
-        contact_list.append(extract_admin_contact())
+        contact_list["user"] = extract_user_contact(user_data)
+        contact_list["admin"] = extract_admin_contact()
 
     return contact_list
 
@@ -21,13 +21,16 @@ def extract_user_contact(data):
                                                         ...}
     :return user_contacts_number_list: ["+61xxxxxxxxx", "+61xxxxxxxxx", ...]
     """
-    user_contacts_number_list = []
-    for contacts in data:
-        contact_data = data[contacts]["contact"]
+    contacts_dict = {}
+    for user in data:
+        user_contacts_number_list = []
+        contact_data = data[user]["contact"]
         for contact in contact_data:
             user_contacts_number_list.append(contact_data[contact]["number"])
 
-    return user_contacts_number_list
+        contacts_dict[user] = user_contacts_number_list
+
+    return contacts_dict
 
 
 def extract_admin_contact():
@@ -37,4 +40,4 @@ def extract_admin_contact():
         admin_number_list.append(data[contact]["number"])
     return admin_number_list
 
-print(contact_list_extractor())
+# print(contact_list_extractor())

@@ -19,11 +19,27 @@ def hello_world():
 
 @app.route('/sending')
 def send_message():
-    contact_list = db.contact_list_extractor()
-    for sub_list in contact_list:
-        for number in sub_list:
-            res = send_sms.send_message(number)
-    return "a message be sent"
+
+    def send_message_by_list(contact_list, message):
+        for number in contact_list:
+            res = send_sms.send_message(number, message)
+            # print("send to: " + number)
+            # print("content is: " + message)
+
+    contact_dict = db.contact_list_extractor()
+    for group in contact_dict:
+        if group == "admin":
+            question = "The daily message has been sent"
+            sub_list = contact_dict[group]
+            send_message_by_list(sub_list, question)
+
+        elif group == "user":
+            for user in contact_dict["user"]:
+                question = "Have you had any contact with " + user + " today Y/N\nIf yes, how many times?"
+                sub_list = contact_dict["user"][user]
+                send_message_by_list(sub_list, question)
+
+    return "all message be sent"
 
 
 @app.route("/receive", methods=['GET', 'POST'])
