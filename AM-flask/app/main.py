@@ -1,5 +1,6 @@
 import send_sms
 import firebase_logging as log
+import dbAPI as db
 
 from flask import Flask, redirect, request, render_template
 
@@ -18,8 +19,10 @@ def hello_world():
 
 @app.route('/sending')
 def send_message():
-
-    res = send_sms.send_message()
+    contact_list = db.contact_list_extractor()
+    for sub_list in contact_list:
+        for number in sub_list:
+            res = send_sms.send_message(number)
     return "a message be sent"
 
 
@@ -69,7 +72,8 @@ def reply():
         response = "Sorry, we got some problems. Could you resend you response to us again. Thank you"
         res = send_sms.reply_message(from_num, response)
         return "fail to record"
-    except:
+    except Exception as err:
+        print(err)
         return "reply module failure"
 
 
