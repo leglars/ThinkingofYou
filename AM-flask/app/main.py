@@ -34,18 +34,23 @@ def receive():
 @app.route("/income", methods=['GET', 'POST'])
 def reply():
 
-    def logger(from_number, response):
+    def logger(from_number, message):
         data = fb.get("/contact", None)
         if not data[from_number]:
-            pass
-            # send_sms.error_response_number(response, from_number)
+            send_sms.error_response_number(message, from_number)
+            return False
 
-        contact = data[from_number]["name"]
-        user = data[from_number]["user"]
+        try:
+            contact = data[from_number]["name"]
+            user = data[from_number]["user"]
 
-        if log.daily_logging(user, contact, from_number, response):
-            return True
-        return False
+            if log.daily_logging(user, contact, from_number, message):
+                return True
+            return False
+        except:
+            # warning = "WARN: can't log message"
+            send_sms.error_logging_fail(message, from_number)
+            return False
 
     """
     POST /income HTTP/1.1
@@ -69,7 +74,7 @@ def reply():
             res = send_sms.reply_message(from_num)
             return "replied"
 
-        response = "Sorry, we got some problems. Could you resend you response to us again. Thank you"
+        response = "Sorry, we got some problems. Could you send your response again. Thank you!\nIf you got this message more than one, just leave it."
         res = send_sms.reply_message(from_num, response)
         return "fail to record"
     except Exception as err:
