@@ -70,17 +70,16 @@ def generate_query_by_time(query, contact):
     return query
 
 
-def is_new_contact(user):
+def is_new_contact(contact):
     """
 
     :param user: string of user name
     :return if user has data, means not a new contact, return false; if none, return true.
     """
-    query = "/logging/response/" + str(user)
+    query = "/logging/response/" + str(contact)
     if fb.get(query, None):
         return False
     return True
-
 
 def create_contact_info(contact, user, number):
     """
@@ -155,7 +154,7 @@ def daily_logging(user, contact, number, text):
     :return success update return True, or not
     """
     try:
-        if is_new_contact(user):
+        if is_new_contact(contact):
             create_contact_info(contact, user, number)
 
         daily_message_logger(contact, text)
