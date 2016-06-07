@@ -1,10 +1,13 @@
 import datetime
 import re
 from firebase import firebase
-fb = firebase.FirebaseApplication("https://burning-heat-7654.firebaseio.com/", None)
+# fb = firebase.FirebaseApplication("https://burning-heat-7654.firebaseio.com/", None)
+fb = firebase.FirebaseApplication("https://project-7730165130527287354.firebaseio.com/", None)
 
 # _YES = ["yes", "Yes", "YES", "Y", "y"]
 # _NO = ["no", "No", "NO", "N", "n"]
+TIME_LINE = 190000  # 24 hour standard ==> 19:00:00
+RECORD_DAY_CHANGE_TIME_LINE = 180000  # 1 hour before TIME_LINE  ==> 18:00:00
 
 
 def get_date():
@@ -38,6 +41,26 @@ def str_date(date):
     return string_date
 
 
+def time_is_over_day_segment():
+    """
+    a return of datetime.datetime.now() follows this format: 2016-06-07 16:21:26.009927
+    we need 16:21:26 ==> 162126
+    """
+    now_list = str(datetime.datetime.now()).split(' ')[1].split('.')[0].split(':')
+    now_string = ""
+    for segment in now_list:
+        now_string += segment
+
+    now = int(now_string)
+    """
+    if the response time is less than RECORD_DAY_CHANGE_TIME_LINE, 18 o'clock, we seems it's the previous day's
+    response so that delta should minus 1. Otherwise, delta is right.
+    """
+    if now < RECORD_DAY_CHANGE_TIME_LINE:
+        return False
+    return True
+
+
 def generate_query_by_time(query, contact):
     """
      this function generates the time layout query based on the date
@@ -51,19 +74,30 @@ def generate_query_by_time(query, contact):
     try:
         delta_string = str(get_date() - get_start_date(contact)).split(' ')[0]
         delta = int(delta_string)
+
     except TypeError as err:
+        """
+        could get_start_date of contact because it hasn't been initialized.
+        """
         print("the contact hasn't initialize the evaluation: ", err)
         return None, err
+
     except ValueError as err:
+        """
+        this exception is used to handle the first day record error.
+        minus the same dates will get "0:00:00".
+        """
         if delta_string == "0:00:00":
             delta = 0
         else:
             print("the date has some problem: ", err)
             return None, err
-
+    print(delta)
     if delta <= 0:
         query += "week1/day1"
     else:
+        if not time_is_over_day_segment():
+            delta -= 1
         week = str(delta // 7 + 1)
         day = str(delta % 7 + 1)
         query += "week" + week + "/day" + day
