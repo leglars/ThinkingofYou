@@ -1,11 +1,12 @@
 import send_sms
 import firebase_logging as log
 import dbAPI as db
+import ENV_VAR as ENV
 
 from flask import Flask, redirect, request, render_template
 
 from firebase import firebase
-fb = firebase.FirebaseApplication("https://burning-heat-7654.firebaseio.com/", None)
+fb = firebase.FirebaseApplication(ENV.FIREBASE_LINK, None)
 
 app = Flask(__name__)
 
@@ -49,15 +50,21 @@ def receive():
 
 @app.route("/income", methods=['GET', 'POST'])
 def reply():
-
+    print("get a new message")
     def logger(from_number, message):
+        print("start logger func")
         data = fb.get("/contact", None)
+        print(data)
+        print(data[from_number])
         if not data[from_number]:
             send_sms.error_response_number(message, from_number)
             return False
 
+        print("find the contact by number")
+
         try:
             contact = data[from_number]["name"]
+            print(contact)
             user = data[from_number]["user"]
 
             if log.daily_logging(user, contact, from_number, message):
@@ -83,11 +90,13 @@ def reply():
     To=61429968959&From=61478417108&TotalRate=0&Units=1&Text=How+are+you&TotalAmount=0&Type=sms&MessageUUID=ca425462-27f0-11e6-890b-22000ae90d37
     """
     try:
+        print("get the number and text")
         from_num = "+" + request.values.get('From', None)
         text = str(request.values.get('Text', None))
 
         if logger(from_num, text):
-            res = send_sms.reply_message(from_num)
+            # res = send_sms.reply_message(from_num)
+            print("thank you, we have received your response")
             return "replied"
 
         response = "Sorry, we got some problems. Could you send your response again. Thank you!\nIf you got this message more than one, just leave it."

@@ -1,5 +1,6 @@
 from firebase import firebase
-fb = firebase.FirebaseApplication("https://burning-heat-7654.firebaseio.com/", None)
+import ENV_VAR as ENV
+fb = firebase.FirebaseApplication(ENV.FIREBASE_LINK, None)
 
 
 def contact_list_extractor(group="default"):
@@ -41,3 +42,12 @@ def extract_admin_contact():
     return admin_number_list
 
 # print(contact_list_extractor())
+
+def add_contact_info(number, name, user):
+    data = {
+        name: name,
+        user: user
+    }
+    query = '/contact/' + number
+    print(query)
+    fb.patch(query, data)

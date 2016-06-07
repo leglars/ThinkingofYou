@@ -4,10 +4,11 @@
 # auth_token = 'eaae9bf97f64e5d844d5c65247216220'
 # client = TwilioRestClient(account_sid, auth_token)
 
-import plivo, plivoxml
+import plivo
+import ENV_VAR as ENV
 
-auth_id = "MAMGEWZGE5NWRJNME3ZJ"
-auth_token = "ZTNiNmIyZDU1N2JjNWQ4MGM5NWE4NmI5MjM1OThm"
+auth_id = ENV.PLIVO["id"]
+auth_token = ENV.PLIVO["token"]
 
 p = plivo.RestAPI(auth_id, auth_token)
 

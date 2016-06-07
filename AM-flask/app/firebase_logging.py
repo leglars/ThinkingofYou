@@ -1,8 +1,9 @@
 import datetime
 import re
 from firebase import firebase
+import ENV_VAR as ENV
 # fb = firebase.FirebaseApplication("https://burning-heat-7654.firebaseio.com/", None)
-fb = firebase.FirebaseApplication("https://project-7730165130527287354.firebaseio.com/", None)
+fb = firebase.FirebaseApplication(ENV.FIREBASE_LINK, None)
 
 # _YES = ["yes", "Yes", "YES", "Y", "y"]
 # _NO = ["no", "No", "NO", "N", "n"]
@@ -92,7 +93,7 @@ def generate_query_by_time(query, contact):
         else:
             print("the date has some problem: ", err)
             return None, err
-    print(delta)
+    # print(delta)
     if delta <= 0:
         query += "week1/day1"
     else:
@@ -187,6 +188,7 @@ def daily_logging(user, contact, number, text):
     :param text: string
     :return success update return True, or not
     """
+    print("daily_logging")
     try:
         if is_new_contact(contact):
             create_contact_info(contact, user, number)
