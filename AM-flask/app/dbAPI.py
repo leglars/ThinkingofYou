@@ -41,7 +41,6 @@ def extract_admin_contact():
         admin_number_list.append(data[contact]["number"])
     return admin_number_list
 
-# print(contact_list_extractor())
 
 def add_contact_info(number, name, user):
     data = {
@@ -49,5 +48,4 @@ def add_contact_info(number, name, user):
         user: user
     }
     query = '/contact/' + number
-    print(query)
     fb.patch(query, data)

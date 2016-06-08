@@ -121,7 +121,7 @@ def create_contact_info(contact, user, number):
     create the basic info of contact under /logging/response
     :param contact: string
     :param user: string
-    :param number: string  "+61478417108"
+    :param number: string  "61478417108"
     """
 
     query = "/logging/response/" + contact
@@ -184,7 +184,7 @@ def daily_logging(user, contact, number, text):
     create the daily message logging automatically, also create the record the data based on the time changing
     :param user: string
     :param contact: string
-    :param number: string "+61478417108"
+    :param number: string "61478417108"
     :param text: string
     :return success update return True, or not
     """

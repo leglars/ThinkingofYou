@@ -91,7 +91,7 @@ def reply():
     """
     try:
         print("get the number and text")
-        from_num = "+" + request.values.get('From', None)
+        from_num = request.values.get('From', None)
         text = str(request.values.get('Text', None))
 
         if logger(from_num, text):

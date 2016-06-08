@@ -12,9 +12,9 @@ auth_token = ENV.PLIVO["token"]
 
 p = plivo.RestAPI(auth_id, auth_token)
 
-_ADMIN_NUMBER = "+61478417108"
-_ADMIN_LIST = ["+61424945548", "+61478417108"]
-_SERVICE_NUMBER = "+61429968959"
+_ADMIN_NUMBER = "61478417108"
+_ADMIN_LIST = ["61424945548", "61478417108"]
+_SERVICE_NUMBER = "61429968959"
 _TEST_QUESTION = "this is a test message from ThinkingofYou"
 
 
