@@ -1,7 +1,10 @@
 import datetime
 import re
 from firebase import firebase
+
 import ENV_VAR as ENV
+import timezone_handler as tz
+
 # fb = firebase.FirebaseApplication("https://burning-heat-7654.firebaseio.com/", None)
 fb = firebase.FirebaseApplication(ENV.FIREBASE_LINK, None)
 
@@ -16,7 +19,8 @@ def get_date():
     just simple get today's date
     :return <class 'datetime.date'>, 2016-06-03
     """
-    return datetime.date.today()
+
+    return tz.get_brisbane_time().date()
 
 
 def get_start_date(contact):
@@ -32,7 +36,7 @@ def get_start_date(contact):
 def str_date(date):
     """
     convert the datetime.date into string
-    :param date: <class 'datetime.date'>, 2016-06-03
+    :param date: <class 'datetime.date'>, 2016-06-10 02:03:46.788409+10:00
     :return 20160603
     """
     d = str(date).split('-')
@@ -108,7 +112,7 @@ def generate_query_by_time(query, contact):
 def is_new_contact(contact):
     """
 
-    :param user: string of user name
+    :param contact: string of contact name
     :return if user has data, means not a new contact, return false; if none, return true.
     """
     query = "/logging/response/" + str(contact)

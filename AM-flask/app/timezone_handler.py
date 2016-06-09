@@ -34,7 +34,6 @@ class UTC(tzinfo):
 def get_brisbane_time():
     return datetime.now(UTC()).astimezone(UTC10())
 
-
 # def time():
 #     fmt = '%Y-%m-%d %H:%M:%S %Z%z'
 #     utc = pytz.utc

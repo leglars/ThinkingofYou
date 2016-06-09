@@ -51,7 +51,7 @@ def receive():
 
 @app.route("/income", methods=['GET', 'POST'])
 def reply():
-    print("get a new message")
+
     def logger(from_number, message):
         print("start logger func")
         data = fb.get("/contact", None)
