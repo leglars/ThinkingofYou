@@ -2,6 +2,7 @@ import send_sms
 import firebase_logging as log
 import dbAPI as db
 import ENV_VAR as ENV
+import function_test as t
 
 from flask import Flask, redirect, request, render_template
 
@@ -131,6 +132,14 @@ def report():
     print("From: %s, To: %s, Status: %s, MessageUUID: %s" % (from_number, to_number, status, uuid))
     return "Delivery status reported"
 
+
+@app.route("/time", methods=['GET', 'POST'])
+def show_time():
+    time = t.time()
+    a = ""
+    for i in time:
+        a += str(i) + '\n'
+    return a
 
 if __name__ == '__main__':
     app.run(debug=True)
