@@ -2,7 +2,7 @@ import send_sms
 import firebase_logging as log
 import dbAPI as db
 import ENV_VAR as ENV
-import function_test as t
+import timezone_handler as t
 
 from flask import Flask, redirect, request, render_template
 
@@ -96,8 +96,8 @@ def reply():
         text = str(request.values.get('Text', None))
 
         if logger(from_num, text):
-            # res = send_sms.reply_message(from_num)
-            print("thank you, we have received your response")
+            res = send_sms.reply_message(from_num)
+            # print("thank you, we have received your response")
             return "replied"
 
         response = "Sorry, we got some problems. Could you send your response again. Thank you!\nIf you got this message more than one, just leave it."
@@ -135,11 +135,7 @@ def report():
 
 @app.route("/time", methods=['GET', 'POST'])
 def show_time():
-    time = t.time()
-    a = ""
-    for i in time:
-        a += str(i) + '\n'
-    return a
+    return t.get_brisbane_time()
 
 if __name__ == '__main__':
     app.run(debug=True)
