@@ -147,6 +147,8 @@ def text_parse(text):
     is_connected = False
     times = 0
 
+    text = clean_text(text)
+
     """
     Since the response follow that, if yes, "Y<whatever>3"; if no, "N"
     we just need find the digit in the text
@@ -160,7 +162,21 @@ def text_parse(text):
         if times > 0:
             is_connected = True
 
+    elif "once" in text:
+        is_connected = True
+        times = 1
+
     return times, is_connected
+
+
+def clean_text(text):
+    """
+    :param text: any string
+    re.complie("\W+") pick up all letters
+    .sub(" ", text) break down string at " "
+    .lower() output at lowercase
+    """
+    return re.compile("\W+").sub(" ", text).strip().lower()
 
 
 def daily_message_logger(contact, text):
