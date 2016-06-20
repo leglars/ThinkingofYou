@@ -31,6 +31,16 @@ def send_thinkingofyou_message():
     print("I'am thinking of you!" + contact_name + "\nA message from " + username)
     return "success"
 
+# sending logic: get user and contact name
+# -> get the approach of sending: email or sms or ...
+# -> different function
+# -> get sending report
+# -> return result
+
+
+# I can have a page to distribute the url, the personal page based on the inform, like a fake login
+# the http can contain a "token" to keep "safe"
+# render template based on data
 
 @app.route("/user/trish")
 def trish_page():
