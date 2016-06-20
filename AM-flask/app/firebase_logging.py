@@ -14,6 +14,10 @@ TIME_LINE = 190000  # 24 hour standard ==> 19:00:00
 RECORD_DAY_CHANGE_TIME_LINE = 180000  # 1 hour before TIME_LINE  ==> 18:00:00
 
 
+def get_brisbane_time():
+    return tz.get_brisbane_time().time()
+
+
 def get_date():
     """
     just simple get today's date
@@ -48,10 +52,10 @@ def str_date(date):
 
 def time_is_over_day_segment():
     """
-    a return of datetime.datetime.now() follows this format: 2016-06-07 16:21:26.009927
+    a return of get_brisbane_time() follows this format: 16:21:26.009927
     we need 16:21:26 ==> 162126
     """
-    now_list = str(datetime.datetime.now()).split(' ')[1].split('.')[0].split(':')
+    now_list = str(get_brisbane_time()).split('.')[0].split(':')
     now_string = ""
     for segment in now_list:
         now_string += segment
@@ -119,6 +123,7 @@ def is_new_contact(contact):
     if fb.get(query, None):
         return False
     return True
+
 
 def create_contact_info(contact, user, number):
     """
@@ -188,12 +193,15 @@ def daily_message_logger(contact, text):
 
     times, is_connected = text_parse(text)
 
+    response_time = str(tz.get_brisbane_time())
+
     data = {
         'date': str_date(get_date()),
         'isResponsed': True,
         'responseText': text,
         'isConnected': is_connected,
         'times': times,
+        'responseTime': response_time,
     }
 
     fb.patch(query, data)

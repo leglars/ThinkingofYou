@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, tzinfo
-# import pytz
 
 
 class UTC10(tzinfo):
@@ -29,6 +28,21 @@ class UTC(tzinfo):
 
     def tzname(self, dt):
         return "UTC +0"
+
+
+class UTC2(tzinfo):
+    """
+    Google App Engine default timezone is UTC +0:00
+    The default UTC timezone don't need to concern dst, so we can directly return 0
+    """
+    def utcoffset(self, dt):
+        return timedelta(hours=2) + self.dst(dt)
+
+    def dst(self, dt):
+        return timedelta(0)
+
+    def tzname(self, dt):
+        return "UTC +2"
 
 
 def get_brisbane_time():

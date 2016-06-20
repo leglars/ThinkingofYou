@@ -12,7 +12,12 @@ fb = firebase.FirebaseApplication(ENV.FIREBASE_LINK, None)
 app = Flask(__name__)
 
 
-@app.route('/')
+##############################
+# url start
+##############################
+
+
+@app.route('/')  # index page
 def hello_world():
     # log.query_builder('yi', "jolly")
     # return 'Hello World!'
@@ -42,11 +47,6 @@ def send_message():
                 send_message_by_list(sub_list, question)
 
     return "all message be sent"
-
-
-@app.route("/receive", methods=['GET', 'POST'])
-def receive():
-    pass
 
 
 @app.route("/income", methods=['GET', 'POST'])
@@ -133,9 +133,18 @@ def report():
     return "Delivery status reported"
 
 
+######################################################################
+# deprecated url; used for developing testing
+######################################################################
+
+@app.route("/receive", methods=['GET', 'POST'])
+def receive():
+    pass
+
+
 @app.route("/time", methods=['GET', 'POST'])
 def show_time():
-    return t.get_brisbane_time()
+    return str(t.get_brisbane_time())
 
 if __name__ == '__main__':
     app.run(debug=True)
