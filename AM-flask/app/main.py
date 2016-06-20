@@ -24,27 +24,44 @@ def hello_world():
     return render_template("index.html")
 
 
+@app.route("/thinkingofyou", methods=['GET', 'POST'])
+def send_thinkingofyou_message():
+    contact_name = request.values.get('contact', None)
+    username = request.values.get('user', None)
+    print("I'am thinking of you!" + contact_name + "\nA message from " + username)
+    return "success"
+
+
+@app.route("/user/trish")
+def trish_page():
+    return render_template("user_page.html")
+
+
+################### ToY End ############################
+
+################### Daily Message ######################
+
 @app.route('/sending')
 def send_message():
 
-    def send_message_by_list(contact_list, message):
-        for number in contact_list:
-            res = send_sms.send_message(number, message)
-            # print("send to: " + number)
-            # print("content is: " + message)
-
-    contact_dict = db.contact_list_extractor()
-    for group in contact_dict:
-        if group == "admin":
-            question = "The daily message has been sent"
-            sub_list = contact_dict[group]
-            send_message_by_list(sub_list, question)
-
-        elif group == "user":
-            for user in contact_dict["user"]:
-                question = "Have you had any contact with " + user + " today Y/N\nIf yes, how many times?"
-                sub_list = contact_dict["user"][user]
-                send_message_by_list(sub_list, question)
+    # def send_message_by_list(contact_list, message):
+    #     for number in contact_list:
+    #         res = send_sms.send_message(number, message)
+    #         # print("send to: " + number)
+    #         # print("content is: " + message)
+    #
+    # contact_dict = db.contact_list_extractor()
+    # for group in contact_dict:
+    #     if group == "admin":
+    #         question = "The daily message has been sent"
+    #         sub_list = contact_dict[group]
+    #         send_message_by_list(sub_list, question)
+    #
+    #     elif group == "user":
+    #         for user in contact_dict["user"]:
+    #             question = "Have you had any contact with " + user + " today Y/N\nIf yes, how many times?"
+    #             sub_list = contact_dict["user"][user]
+    #             send_message_by_list(sub_list, question)
 
     return "all message be sent"
 
@@ -131,6 +148,9 @@ def report():
     # Prints the status of the message
     print("From: %s, To: %s, Status: %s, MessageUUID: %s" % (from_number, to_number, status, uuid))
     return "Delivery status reported"
+
+
+############################## Daily Message End ###############################
 
 
 ######################################################################
