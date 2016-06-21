@@ -40,6 +40,12 @@ def send_thinkingofyou_message():
 # -> return result
 
 
+@app.route("/thinkingofyou/error/report", methods=['GET', 'POST'])
+def thinkingofyou_error_report():
+    username = request.values.get('user', None).title()
+    res = send_sms.error_toy_message_sending_fail(username)
+    return "report success"
+
 # I can have a page to distribute the url, the personal page based on the inform, like a fake login
 # the http can contain a "token" to keep "safe"
 # render template based on data
