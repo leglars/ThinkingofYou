@@ -49,3 +49,10 @@ def add_contact_info(number, name, user):
     }
     query = '/contact/' + number
     fb.patch(query, data)
+
+
+def get_contact_number(username, contact_name):
+    query = "/user/" + username + "/contact/" + contact_name
+    contact_info = fb.get(query, None)
+    contact_number = contact_info["number"]
+    return contact_number

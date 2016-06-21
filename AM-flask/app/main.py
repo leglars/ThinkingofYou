@@ -28,9 +28,9 @@ def hello_world():
 def send_thinkingofyou_message():
     contact_name = request.values.get('contact', None)
     username = request.values.get('user', None).title()
-
-    res = send_sms.send_toy_message(contact_name, username)
-    # print("I'am thinking of you!" + contact_name + "\nA message from " + username)
+    contact_number = db.get_contact_number(username, contact_name)
+    # res = send_sms.send_toy_message(contact_name, username, contact_number)
+    print("I'am thinking of you!" + contact_name + "\nA message from " + username)
     return "success"
 
 # sending logic: get user and contact name

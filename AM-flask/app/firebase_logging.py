@@ -88,7 +88,7 @@ def generate_query_by_time(query, contact):
         """
         could get_start_date of contact because it hasn't been initialized.
         """
-        print("the contact hasn't initialize the evaluation: ", err)
+        # print("the contact hasn't initialize the evaluation: ", err)
         return None, err
 
     except ValueError as err:
@@ -99,7 +99,7 @@ def generate_query_by_time(query, contact):
         if delta_string == "0:00:00":
             delta = 0
         else:
-            print("the date has some problem: ", err)
+            # print("the date has some problem: ", err)
             return None, err
     # print(delta)
     if delta <= 0:
@@ -216,7 +216,7 @@ def daily_logging(user, contact, number, text):
     :param text: string
     :return success update return True, or not
     """
-    print("daily_logging")
+    # print("daily_logging")
     try:
         if is_new_contact(contact):
             create_contact_info(contact, user, number)
@@ -224,7 +224,7 @@ def daily_logging(user, contact, number, text):
         daily_message_logger(contact, text)
         return True
     except Exception as err:
-        print("Handling unknown error:  ", err)
+        # print("Handling unknown error:  ", err)
         return False
 
 
