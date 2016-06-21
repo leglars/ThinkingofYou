@@ -27,8 +27,10 @@ def hello_world():
 @app.route("/thinkingofyou", methods=['GET', 'POST'])
 def send_thinkingofyou_message():
     contact_name = request.values.get('contact', None)
-    username = request.values.get('user', None)
-    print("I'am thinking of you!" + contact_name + "\nA message from " + username)
+    username = request.values.get('user', None).title()
+
+    res = send_sms.send_toy_message(contact_name, username)
+    # print("I'am thinking of you!" + contact_name + "\nA message from " + username)
     return "success"
 
 # sending logic: get user and contact name
@@ -51,6 +53,7 @@ def trish_page():
 
 ################### Daily Message ######################
 
+# TODO send different message based on the time, or the setting period
 @app.route('/sending')
 def send_message():
 
@@ -80,19 +83,19 @@ def send_message():
 def reply():
 
     def logger(from_number, message):
-        print("start logger func")
+        # print("start logger func")
         data = fb.get("/contact", None)
-        print(data)
-        print(data[from_number])
+        # print(data)
+        # print(data[from_number])
         if not data[from_number]:
             send_sms.error_response_number(message, from_number)
             return False
 
-        print("find the contact by number")
+        # print("find the contact by number")
 
         try:
             contact = data[from_number]["name"]
-            print(contact)
+            # print(contact)
             user = data[from_number]["user"]
 
             if log.daily_logging(user, contact, from_number, message):
@@ -118,7 +121,7 @@ def reply():
     To=61429968959&From=61478417108&TotalRate=0&Units=1&Text=How+are+you&TotalAmount=0&Type=sms&MessageUUID=ca425462-27f0-11e6-890b-22000ae90d37
     """
     try:
-        print("get the number and text")
+        # print("get the number and text")
         from_num = request.values.get('From', None)
         text = str(request.values.get('Text', None))
 

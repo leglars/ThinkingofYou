@@ -18,6 +18,8 @@ _SERVICE_NUMBER = "61429968959"
 _TEST_QUESTION = "this is a test message from ThinkingofYou"
 
 
+# Auto daily message start #####################################
+
 def send_message(to_number=_ADMIN_NUMBER, question=_TEST_QUESTION):
     # client.messages.create(
     #     to=to,
@@ -101,3 +103,12 @@ def error_response_number(text, number):
 def error_logging_fail(text, number):
     warning = "WARNING: logging fail\nNumber: " + number + "\nContent: " + text
     send_message(_ADMIN_NUMBER, warning)
+
+
+# Auto daily message End ###################################################
+
+# TOY message start ########################################################
+
+def send_toy_message(contact_name, username, to_number=_ADMIN_NUMBER):
+    message = "I'm Thinking of You, " + contact_name + "!\n-- A message from " + username
+    return send_message(to_number, message)
