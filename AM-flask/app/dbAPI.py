@@ -85,3 +85,9 @@ def get_schedule(username):
         weeks += schedule[key]
         schedule_list.append(weeks)
     return schedule_list
+
+
+def get_contact_name_and_username_by_number(number):
+    query = "/contact/" + number
+    data = fb.get(query, None)
+    return data["name"], data["user"]

@@ -74,17 +74,19 @@ def trish_page():
 @app.route('/sending')
 def send_message():
 
-    def send_message_by_list(contact_list, message):
-        for number in contact_list:
-            res = send_sms.send_message(number, message)
+    def send_message_by_list(contacts_list):
+        for number in contacts_list:
+            question = question_selector(db.get_contact_name_and_username_by_number(number))
+            res = send_sms.send_message(number, question)
             # print("send to: " + number)
             # print("content is: " + message)
 
-    def question_selector(username):
+    def question_selector(contact_name_and_username_tuple):
+        contact_name, username = contact_name_and_username_tuple
         q = ""
         schedule_list = db.get_schedule(username)
-        week_number = log.generate_time_path_by_delta(log.get_days_delta("/user/" + username))
-        
+        week_number = log.generate_time_path_by_delta(log.get_days_delta("/logging/response/" + contact_name))
+
         if week_number <= schedule_list[0] or week_number > schedule_list[1]:
             q += "Have you had any contact with " + username + " today Y/N\nIf yes, how many times?"
         elif schedule_list[0] < week_number <= schedule_list[1]:
@@ -95,16 +97,16 @@ def send_message():
     contact_dict = db.contact_list_extractor()
     for group in contact_dict:
         if group == "admin":
-            question = "The daily message has been sent"
-            sub_list = contact_dict[group]
-            send_message_by_list(sub_list, question)
+            message = "The daily message has been sent"
+            contact_list = contact_dict[group]
+            for number in contact_list:
+                res = send_sms.send_message(number, message)
 
         elif group == "user":
             for user in contact_dict["user"]:
-                question = question_selector(user)
 
-                sub_list = contact_dict["user"][user]
-                send_message_by_list(sub_list, question)
+                contact_list = contact_dict["user"][user]
+                send_message_by_list(contact_list)
 
     return "all message be sent"
 
