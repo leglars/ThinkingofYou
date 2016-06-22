@@ -70,14 +70,18 @@ def time_is_over_day_segment():
 
 
 def generate_query_by_time(query):
+    delta = get_days_delta(query)
+    query += "/dailyMessage/" + generate_time_path_by_delta(delta)
+    return query
+
+
+def get_days_delta(query):
     """
      this function generates the time layout query based on the date
      :param query: string; the base of query path: "/logging/response/"
-     :param contact: string
      :return the final query path: "/logging/response/<contact>/dailyMessage/week1/day1"
     """
     # the format of delta: 18 days, 0:00:00
-
 
     try:
         delta_string = str(get_date() - get_start_date(query)).split(' ')[0]
@@ -100,10 +104,7 @@ def generate_query_by_time(query):
         else:
             # print("the date has some problem: ", err)
             return None, err
-    # print(delta)
-    query += "/dailyMessage/" + generate_time_path_by_delta(delta)
-
-    return query
+    return delta
 
 
 def generate_time_path_by_delta(delta):
@@ -115,6 +116,10 @@ def generate_time_path_by_delta(delta):
         week = str(delta // 7 + 1)
         day = str(delta % 7 + 1)
         return "week" + week + "/day" + day
+
+
+def get_week_number(time_path):
+    return int(time_path.split("week")[1].split("/")[0])
 
 
 def is_new_contact(contact):

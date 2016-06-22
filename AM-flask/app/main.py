@@ -4,11 +4,11 @@ import dbAPI as db
 import ENV_VAR as ENV
 import timezone_handler as t
 from send_email import EmailHandler
-email = EmailHandler()
-
 from flask import Flask, redirect, request, render_template
-
 from firebase import firebase
+
+# init
+email = EmailHandler()
 fb = firebase.FirebaseApplication(ENV.FIREBASE_LINK, None)
 
 app = Flask(__name__)
@@ -80,6 +80,18 @@ def send_message():
             # print("send to: " + number)
             # print("content is: " + message)
 
+    def question_selector(username):
+        q = ""
+        schedule_list = db.get_schedule(username)
+        week_number = log.generate_time_path_by_delta(log.get_days_delta("/user/" + username))
+        
+        if week_number <= schedule_list[0] or week_number > schedule_list[1]:
+            q += "Have you had any contact with " + username + " today Y/N\nIf yes, how many times?"
+        elif schedule_list[0] < week_number <= schedule_list[1]:
+            q += "Have you had any contact with " + username + " today Y/N\nIf yes, how many times?"
+
+        return q
+
     contact_dict = db.contact_list_extractor()
     for group in contact_dict:
         if group == "admin":
@@ -89,7 +101,8 @@ def send_message():
 
         elif group == "user":
             for user in contact_dict["user"]:
-                question = "Have you had any contact with " + user + " today Y/N\nIf yes, how many times?"
+                question = question_selector(user)
+
                 sub_list = contact_dict["user"][user]
                 send_message_by_list(sub_list, question)
 

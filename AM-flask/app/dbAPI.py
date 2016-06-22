@@ -69,3 +69,19 @@ def get_contact_email(username, contact_name):
     contact_info = fb.get(query, None)
     contact_email = contact_info["email"]
     return contact_email
+
+
+def get_schedule(username):
+    """
+    :param username: string of user
+    get schedule<dict> --> schedule_list<list> [baseline, implementation, postline]
+    """
+    query = "/user/" + username + "/schedule"
+    schedule = fb.get(query, None)
+    stage_list = ["baseline", "implementation", "postline"]
+    weeks = 0
+    schedule_list = []
+    for key in stage_list:
+        weeks += schedule[key]
+        schedule_list.append(weeks)
+    return schedule_list
