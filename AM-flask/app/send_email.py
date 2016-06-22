@@ -5,57 +5,7 @@ from time import sleep
 import send_sms
 import ENV_VAR as env
 
-_ADMIN_EMAIL = "yi.zheng3@uqconnect.edu.au"
-_ADMIN_LIST = ["leglars@gmail.com", "yi.zheng3@uqconnect.edu.au"]
-# _SERVICE_EMAIL = "yi.zheng3@uqconnect.edu.au"
-_SERVICE_EMAIL = "leglars@gmail.com"
-_TEST_EMAIL = "this is a test email from ThinkingofYou"
-
-
-def send_toy_message(username, contact_name, to_email=_ADMIN_EMAIL, email_content=_TEST_EMAIL):
-    if username and contact_name:
-        email_content = "I'm Thinking of You, " + contact_name + "!\n \000\000\000-- From Trish [TOY]"
-    msg = MIMEText(email_content)
-
-    # me == the sender's email address
-    # you == the recipient's email address
-    msg['Subject'] = "TOY message from " + username
-    msg['From'] = _SERVICE_EMAIL
-    msg['To'] = to_email
-
-    # Send the message via our own SMTP server.
-    s = smtplib.SMTP("smtp.google.com")
-    s.login(_SERVICE_EMAIL, "1936887IWMzy")
-    s.send_message(msg)
-    s.quit()
-    print("sending success")
-
-
-def send_email():
-    SERVER = "smtp.office365.com"
-    FROM = "yi.zheng3@uqconnect.edu.au"
-    TO = ["leglars@gmail.com"] # must be a list
-
-    SUBJECT = "Hello!"
-    TEXT = "This is a test of emailing through smtp in google."
-
-    # Prepare actual message
-    message = """From: %s\r\nTo: %s\r\nSubject: %s\r\n\
-
-    %s
-    """ % (FROM, ", ".join(TO), SUBJECT, TEXT)
-
-    # Send the mail
-    server = smtplib.SMTP(SERVER, 587)
-    server.ehlo()
-    server.starttls()
-    server.ehlo()
-    server.login("yi.zheng3@uqconnect.edu.au", "1936887IWMuq")
-    server.sendmail(FROM, TO, message)
-    server.quit()
-
-
-send_email()
+_ADMIN_EMAIL = "leglars@gmail.com"
 
 
 class EmailHandler():
@@ -75,8 +25,9 @@ class EmailHandler():
         self._host = service_account_info["host"]
         self._port = service_account_info["port"]
         self._recognizer = service_account_info["recognizer"]
+        self._backup_email_info = service_account_info["backupEmailAccount"]
 
-    def send_mail(self, receivers, subject, text):
+    def send_mail(self, receivers=_ADMIN_EMAIL, text="This is a message from TOY.", subject="I'm Thinking of You!"):
         """
         :param receivers: a email<string> or a list of email<string>
         :param subject: string
@@ -97,8 +48,9 @@ class EmailHandler():
 
             msg = MIMEText(text)
             msg['Subject'] = subject
+            # set up display name by the following format
             # UserFirstName UserLastName <FromEmail@example.com>
-            msg['From'] = "ToY <" + self._service + ">"
+            msg['From'] = self._recognizer + " <" + self._service + ">"
             msg['To'] = receiver
 
             try:
@@ -107,12 +59,51 @@ class EmailHandler():
                 res = send_sms.error_toy_email_sending_fail(receiver)
             except smtplib.SMTPSenderRefused:
                 # TODO threading a new thread
-                self.send_mail(receiver, subject, text)
+                if self.send_email_by_backup_account(receiver, subject, text):
+                    continue
+                else:
+                    # TODO a error reporter
+                    pass
+        smtp.quit()
+        return True
+
+    def send_email_by_backup_account(self, receivers, subject, text):
+
+        server = self._backup_email_info["host"]
+        port = self._backup_email_info["port"]
+        service_email = self._backup_email_info["account"]
+
+        password = self._backup_email_info["password"]
+
+        if not isinstance(receivers, list):
+            receivers = [receivers]
+
+        # Send the message via our own SMTP server, but don't include the envelope header
+        smtp = smtplib.SMTP(server, port)
+        smtp.ehlo()
+        smtp.starttls()
+        smtp.ehlo()
+        smtp.login(service_email, password)
+
+        for receiver in receivers:
+
+            msg = MIMEText(text)
+            msg['Subject'] = subject
+            msg['From'] = self._recognizer + " <" + service_email + ">"
+            msg['To'] = receiver
+            try:
+                smtp.sendmail(service_email, receiver, str(msg))
+                break
+            except:
+                smtp.quit()
+                return False
 
         smtp.quit()
-
         return True
 
 
 email = EmailHandler()
-email.send_mail("leglars@gmail.com", "testing", "this is a message from toy")
+email.send_email_by_backup_account("leglars@gmail.com", "testing", "this is a message from toy")
+
+
+

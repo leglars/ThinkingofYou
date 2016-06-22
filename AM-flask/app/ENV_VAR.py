@@ -10,5 +10,12 @@ SERVICE_EMAIL_ACCOUNT = {
     "password": "1936887IWMuq",
     "host": "smtp.office365.com",
     "port": 587,
-    "recognizer": "Thinking of You"
+    "recognizer": "Thinking of You",
+
+    "backupEmailAccount": {
+        "account": "leglars@gmail.com",
+        "password": "1936887IWMzy",
+        "host": "smtp.gmail.com",
+        "port": 587,
+    }
 }
