@@ -7,7 +7,6 @@ from send_email import EmailHandler
 email = EmailHandler()
 
 from flask import Flask, redirect, request, render_template
-from threading import Thread
 
 from firebase import firebase
 fb = firebase.FirebaseApplication(ENV.FIREBASE_LINK, None)
@@ -38,7 +37,7 @@ def send_thinkingofyou_message():
         # if not email.send_mail(contact_email, text):
         email.send_mail(text=text)
 
-        print("Send email to: " + contact_email + "\n" + text)
+        # print("Send email to: " + contact_email + "\n" + text)
         return "success"
 
     else:

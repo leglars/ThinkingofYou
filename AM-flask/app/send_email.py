@@ -53,22 +53,18 @@ class EmailHandler():
             msg['From'] = self._recognizer + " <" + self._service + ">"
             msg['To'] = receiver
 
-            # try:
-            #     smtp.sendmail(self._service, receiver, str(msg))
-            # except smtplib.SMTPRecipientsRefused:
-            #     res = send_sms.error_toy_email_sending_fail(receiver)
-            # except smtplib.SMTPSenderRefused:
-            #     # TODO threading a new thread
-            #     if self.send_email_by_backup_account(receiver, subject, text):
-            #         continue
-            #     else:
-            #         # TODO a error reporter
-            #         pass
+            try:
+                smtp.sendmail(self._service, receiver, str(msg))
+            except smtplib.SMTPRecipientsRefused:
+                res = send_sms.error_toy_email_sending_fail(receiver)
+            except smtplib.SMTPSenderRefused:
+                # if self.send_email_by_backup_account(receiver, subject, text):
+                #     continue
+                # else:
+                #     # TODO a error reporter
+                #     pass
+                pass
 
-            test = Thread(target=self.multi_send(smtp, receiver, subject, text, msg))
-            test.start()
-
-        print("return")
         return True
 
     def multi_send(self, smtp, receiver, subject, text, msg):
@@ -77,14 +73,11 @@ class EmailHandler():
         except smtplib.SMTPRecipientsRefused:
             res = send_sms.error_toy_email_sending_fail(receiver)
         except smtplib.SMTPSenderRefused:
-            # TODO threading a new thread
-            if self.send_email_by_backup_account(receiver, subject, text):
-                pass
-            else:
-                # TODO a error reporter
-                pass
-
-        print("finish thread")
+            # if self.send_email_by_backup_account(receiver, subject, text):
+            #     pass
+            # else:
+            #     pass
+            pass
 
     def send_email_by_backup_account(self, receivers, subject, text):
 
@@ -121,71 +114,72 @@ class EmailHandler():
         return True
 
 
-class SendMail(Thread):
-    def __init__(self, receivers=_ADMIN_EMAIL, text="This is a message from TOY.", subject="I'm Thinking of You!", service_account_info=env.SERVICE_EMAIL_ACCOUNT):
-
-        self._service = service_account_info["account"]
-        self._password = service_account_info["password"]
-        self._host = service_account_info["host"]
-        self._port = service_account_info["port"]
-        self._recognizer = service_account_info["recognizer"]
-        self._backup_email_info = service_account_info["backupEmailAccount"]
-        self._receivers = receivers
-        self._text = text
-        self._subject = subject
-    def run(self):
-        try:
-            if not isinstance(self._receivers, list):
-                receivers = [self._receivers]
-
-            # Send the message via our own SMTP server, but don't include the envelope header
-            smtp = smtplib.SMTP(self._host, self._port)
-            smtp.ehlo()
-            smtp.starttls()
-            smtp.ehlo()
-            smtp.login(self._service, self._password)
-
-            for receiver in receivers:
-
-                msg = MIMEText(self._text)
-                msg['Subject'] = self._subject
-                # set up display name by the following format
-                # UserFirstName UserLastName <FromEmail@example.com>
-                msg['From'] = self._recognizer + " <" + self._service + ">"
-                msg['To'] = receiver
-
-                try:
-                    smtp.sendmail(self._service, receiver, str(msg))
-                except smtplib.SMTPRecipientsRefused:
-                    res = send_sms.error_toy_email_sending_fail(receiver)
-                except smtplib.SMTPSenderRefused:
-                    # TODO threading a new thread
-                    if self.send_email_by_backup_account(receiver, self._subject, self._text):
-                        continue
-                    else:
-                        # TODO a error reporter
-                        pass
-        except:
-              pass
-
-        print("finish thread")
-
-# email = EmailHandler()
-# email.send_mail("leglars@gmail.com", "testing", "this is a message from toy")
-
-
-def send():
-    if True:
-        mail = SendMail("leglars@gmail.com", "testing", "this is a message from toy")
-        mail.run()
-
-        mail = SendMail("leglars@gmail.com", "testing", "this is a message")
-        mail.run()
-
-        print("end if")
-
-    return "return"
-
-print(send())
+# class SendMail(Thread):
+#     def __init__(self, receivers=_ADMIN_EMAIL, text="This is a message from TOY.", /
+#                   subject="I'm Thinking of You!", service_account_info=env.SERVICE_EMAIL_ACCOUNT):
+#
+#         self._service = service_account_info["account"]
+#         self._password = service_account_info["password"]
+#         self._host = service_account_info["host"]
+#         self._port = service_account_info["port"]
+#         self._recognizer = service_account_info["recognizer"]
+#         self._backup_email_info = service_account_info["backupEmailAccount"]
+#         self._receivers = receivers
+#         self._text = text
+#         self._subject = subject
+#     def run(self):
+#         try:
+#             if not isinstance(self._receivers, list):
+#                 receivers = [self._receivers]
+#
+#             # Send the message via our own SMTP server, but don't include the envelope header
+#             smtp = smtplib.SMTP(self._host, self._port)
+#             smtp.ehlo()
+#             smtp.starttls()
+#             smtp.ehlo()
+#             smtp.login(self._service, self._password)
+#
+#             for receiver in receivers:
+#
+#                 msg = MIMEText(self._text)
+#                 msg['Subject'] = self._subject
+#                 # set up display name by the following format
+#                 # UserFirstName UserLastName <FromEmail@example.com>
+#                 msg['From'] = self._recognizer + " <" + self._service + ">"
+#                 msg['To'] = receiver
+#
+#                 try:
+#                     smtp.sendmail(self._service, receiver, str(msg))
+#                 except smtplib.SMTPRecipientsRefused:
+#                     res = send_sms.error_toy_email_sending_fail(receiver)
+#                 except smtplib.SMTPSenderRefused:
+#                     # TODO threading a new thread
+#                     if self.send_email_by_backup_account(receiver, self._subject, self._text):
+#                         continue
+#                     else:
+#                         # TODO a error reporter
+#                         pass
+#         except:
+#               pass
+#
+#         print("finish thread")
+#
+# # email = EmailHandler()
+# # email.send_mail("leglars@gmail.com", "testing", "this is a message from toy")
+#
+#
+# def send():
+#     if True:
+#         mail = SendMail("leglars@gmail.com", "testing", "this is a message from toy")
+#         mail.run()
+#
+#         mail = SendMail("leglars@gmail.com", "testing", "this is a message")
+#         mail.run()
+#
+#         print("end if")
+#
+#     return "return"
+#
+# print(send())
 
 

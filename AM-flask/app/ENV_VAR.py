@@ -6,9 +6,9 @@ PLIVO = {
 }
 
 SERVICE_EMAIL_ACCOUNT = {
-    "account": "yi.zheng3@uqconnect.edu.au",
+    "account": "leglars@gmail.com",
     "password": "1936887IWMuq",
-    "host": "smtp.office365.com",
+    "host": "smtp.gmail.com",
     "port": 587,
     "recognizer": "Thinking of You",
 
