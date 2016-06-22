@@ -27,14 +27,13 @@ def get_date():
     return tz.get_brisbane_time().date()
 
 
-def get_start_date(contact):
+def get_start_date(query):
     """
     get the evaluation start-date of this contact
-    :param contact: string
+    :param query: string   a path contains startDate key   /logging/response/<contact_name>
     :return <class 'datetime.date'>, 2016-06-03
     """
-    query = "/logging/response/" + contact + "/startDate"
-    return datetime.datetime.strptime(fb.get(query, None), "%Y%m%d").date()
+    return datetime.datetime.strptime(fb.get(query, None)["startDate"], "%Y%m%d").date()
 
 
 def str_date(date):
@@ -70,7 +69,7 @@ def time_is_over_day_segment():
     return True
 
 
-def generate_query_by_time(query, contact):
+def generate_query_by_time(query):
     """
      this function generates the time layout query based on the date
      :param query: string; the base of query path: "/logging/response/"
@@ -78,10 +77,10 @@ def generate_query_by_time(query, contact):
      :return the final query path: "/logging/response/<contact>/dailyMessage/week1/day1"
     """
     # the format of delta: 18 days, 0:00:00
-    query += contact + "/dailyMessage/"
+
 
     try:
-        delta_string = str(get_date() - get_start_date(contact)).split(' ')[0]
+        delta_string = str(get_date() - get_start_date(query)).split(' ')[0]
         delta = int(delta_string)
 
     except TypeError as err:
@@ -102,8 +101,7 @@ def generate_query_by_time(query, contact):
             # print("the date has some problem: ", err)
             return None, err
     # print(delta)
-
-    query += generate_time_path_by_delta(delta)
+    query += "/dailyMessage/" + generate_time_path_by_delta(delta)
 
     return query
 
@@ -191,8 +189,8 @@ def clean_text(text):
 
 
 def daily_message_logger(contact, text):
-    base_query = "/logging/response/"
-    query = generate_query_by_time(base_query, contact)
+    query = "/logging/response/" + contact
+    query = generate_query_by_time(query)
 
     if not query[0]:
         raise Exception("query module report an error")
@@ -251,7 +249,7 @@ def toy_message_logging(username, contact_name):
     if is_new_toy_logging(query):
         create_toy_logging(query)
 
-    query = get_time_path_query(query)
+    query = generate_query_by_time(query)
     total = get_total_times(query)
     if total is None:
         data = {"date": str_date(get_date()),
@@ -287,41 +285,6 @@ def is_new_toy_logging(query):
 def create_toy_logging(query):
     data = {'startDate': str_date(get_date())}
     fb.patch(query, data)
-
-
-def get_start_logging_date(query):
-    try:
-        return datetime.datetime.strptime(fb.get(query, None)["startDate"], "%Y%m%d").date()
-    except:
-        return None
-
-
-def get_time_path_query(query):
-    try:
-        delta_string = str(get_date() - get_start_logging_date(query)).split(' ')[0]
-        delta = int(delta_string)
-
-    except TypeError as err:
-        """
-        could get_start_date of contact because it hasn't been initialized.
-        """
-        # print("the contact hasn't initialize the evaluation: ", err)
-        return None, err
-
-    except ValueError as err:
-        """
-        this exception is used to handle the first day record error.
-        minus the same dates will get "0:00:00".
-        """
-        if delta_string == "0:00:00":
-            delta = 0
-        else:
-            # print("the date has some problem: ", err)
-            return None, err
-    # print(delta)
-
-    query += generate_time_path_by_delta(delta)
-    return query
 
 
 def get_total_times(query):
