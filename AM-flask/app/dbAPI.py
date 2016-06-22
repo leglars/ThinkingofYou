@@ -56,3 +56,16 @@ def get_contact_number(username, contact_name):
     contact_info = fb.get(query, None)
     contact_number = contact_info["number"]
     return contact_number
+
+
+def is_toy_message_send_by_email(username, contact_name):
+    query = "/user/" + username + "/contact/" + contact_name
+    contact_info = fb.get(query, None)
+    return contact_info["isToySendByEmail"]
+
+
+def get_contact_email(username, contact_name):
+    query = "/user/" + username + "/contact/" + contact_name
+    contact_info = fb.get(query, None)
+    contact_email = contact_info["email"]
+    return contact_email

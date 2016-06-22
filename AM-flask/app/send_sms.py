@@ -113,6 +113,12 @@ def send_toy_message(contact_name, username, to_number=_ADMIN_NUMBER):
     message = "I'm Thinking of You, " + contact_name + "!\n-- A message from " + username
     return send_message(to_number, message)
 
+
 def error_toy_message_sending_fail(username, to_number=_ADMIN_NUMBER):
     warning = "WARNING: " + username + " can't send toy message, post function failure!"
+    return send_message(to_number, warning)
+
+
+def error_toy_email_sending_fail(email, to_number=_ADMIN_NUMBER):
+    warning = "WARNING: " + email + " can't be reached!"
     return send_message(to_number, warning)
