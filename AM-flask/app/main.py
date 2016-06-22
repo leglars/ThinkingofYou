@@ -31,6 +31,8 @@ def send_thinkingofyou_message():
     contact_name = request.values.get('contact', None)
     username = request.values.get('user', None).title()
 
+    log.toy_message_logging(username, contact_name)
+
     if db.is_toy_message_send_by_email(username, contact_name):
         contact_email = db.get_contact_email(username, contact_name)
         text = "I'am thinking of you, " + contact_name + "!\n \000\000--A message from " + username

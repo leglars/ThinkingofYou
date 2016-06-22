@@ -102,15 +102,21 @@ def generate_query_by_time(query, contact):
             # print("the date has some problem: ", err)
             return None, err
     # print(delta)
+
+    query += generate_time_path_by_delta(delta)
+
+    return query
+
+
+def generate_time_path_by_delta(delta):
     if delta <= 0:
-        query += "week1/day1"
+        return "week1/day1"
     else:
         if not time_is_over_day_segment():
             delta -= 1
         week = str(delta // 7 + 1)
         day = str(delta % 7 + 1)
-        query += "week" + week + "/day" + day
-    return query
+        return "week" + week + "/day" + day
 
 
 def is_new_contact(contact):
@@ -231,3 +237,92 @@ def daily_logging(user, contact, number, text):
 def status_logging():
     pass
 # may need a new query builder. the path could be /logging/na
+
+
+#################################################################
+
+def toy_message_logging(username, contact_name):
+    if not is_a_valid_user(username):
+        # TODO: a error reporter
+        print("can't find user: " + username)
+        pass
+    query = "/logging/toy/" + username + "/"
+
+    if is_new_toy_logging(query):
+        create_toy_logging(query)
+
+    query = get_time_path_query(query)
+    total = get_total_times(query)
+    if total is None:
+        data = {"date": str_date(get_date()),
+                "total": 1}
+        fb.patch(query, data)
+    else:
+        total += 1
+        data = {"total": total}
+        fb.patch(query, data)
+
+    query += "/originRecord"
+
+    record_data = {"loggingTime": str(tz.get_brisbane_time()),
+                   "target": contact_name}
+    fb.post(query, record_data)
+
+    return True
+
+
+def is_a_valid_user(username):
+    query = "/user/" + username
+    if fb.get(query, None):
+        return True
+    return False
+
+
+def is_new_toy_logging(query):
+    if not fb.get(query, None):
+        return True
+    return False
+
+
+def create_toy_logging(query):
+    data = {'startDate': str_date(get_date())}
+    fb.patch(query, data)
+
+
+def get_start_logging_date(query):
+    try:
+        return datetime.datetime.strptime(fb.get(query, None)["startDate"], "%Y%m%d").date()
+    except:
+        return None
+
+
+def get_time_path_query(query):
+    try:
+        delta_string = str(get_date() - get_start_logging_date(query)).split(' ')[0]
+        delta = int(delta_string)
+
+    except TypeError as err:
+        """
+        could get_start_date of contact because it hasn't been initialized.
+        """
+        # print("the contact hasn't initialize the evaluation: ", err)
+        return None, err
+
+    except ValueError as err:
+        """
+        this exception is used to handle the first day record error.
+        minus the same dates will get "0:00:00".
+        """
+        if delta_string == "0:00:00":
+            delta = 0
+        else:
+            # print("the date has some problem: ", err)
+            return None, err
+    # print(delta)
+
+    query += generate_time_path_by_delta(delta)
+    return query
+
+
+def get_total_times(query):
+    return fb.get(query + "/total", None)
