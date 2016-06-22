@@ -3,8 +3,11 @@ import firebase_logging as log
 import dbAPI as db
 import ENV_VAR as ENV
 import timezone_handler as t
+from send_email import EmailHandler
+email = EmailHandler()
 
 from flask import Flask, redirect, request, render_template
+from threading import Thread
 
 from firebase import firebase
 fb = firebase.FirebaseApplication(ENV.FIREBASE_LINK, None)
@@ -28,18 +31,22 @@ def hello_world():
 def send_thinkingofyou_message():
     contact_name = request.values.get('contact', None)
     username = request.values.get('user', None).title()
+
     if db.is_toy_message_send_by_email(username, contact_name):
         contact_email = db.get_contact_email(username, contact_name)
-    contact_number = db.get_contact_number(username, contact_name)
-    # res = send_sms.send_toy_message(contact_name, username, contact_number)
-    print("I'am thinking of you!" + contact_name + "\nA message from " + username)
-    return "success"
+        text = "I'am thinking of you, " + contact_name + "!\n \000\000--A message from " + username
+        # if not email.send_mail(contact_email, text):
+        email.send_mail(text=text)
 
-# sending logic: get user and contact name
-# -> get the approach of sending: email or sms or ...
-# -> different function
-# -> get sending report
-# -> return result
+        print("Send email to: " + contact_email + "\n" + text)
+        return "success"
+
+    else:
+        contact_number = db.get_contact_number(username, contact_name)
+        # res = send_sms.send_toy_message(contact_name, username, contact_number)
+        res = send_sms.send_toy_message(contact_name, username)
+        # print("I'am thinking of you!" + contact_name + "\nA message from " + username)
+        return "success"
 
 
 @app.route("/thinkingofyou/error/report", methods=['GET', 'POST'])
@@ -51,6 +58,7 @@ def thinkingofyou_error_report():
 # I can have a page to distribute the url, the personal page based on the inform, like a fake login
 # the http can contain a "token" to keep "safe"
 # render template based on data
+
 
 @app.route("/user/trish")
 def trish_page():
@@ -65,24 +73,24 @@ def trish_page():
 @app.route('/sending')
 def send_message():
 
-    # def send_message_by_list(contact_list, message):
-    #     for number in contact_list:
-    #         res = send_sms.send_message(number, message)
-    #         # print("send to: " + number)
-    #         # print("content is: " + message)
-    #
-    # contact_dict = db.contact_list_extractor()
-    # for group in contact_dict:
-    #     if group == "admin":
-    #         question = "The daily message has been sent"
-    #         sub_list = contact_dict[group]
-    #         send_message_by_list(sub_list, question)
-    #
-    #     elif group == "user":
-    #         for user in contact_dict["user"]:
-    #             question = "Have you had any contact with " + user + " today Y/N\nIf yes, how many times?"
-    #             sub_list = contact_dict["user"][user]
-    #             send_message_by_list(sub_list, question)
+    def send_message_by_list(contact_list, message):
+        for number in contact_list:
+            res = send_sms.send_message(number, message)
+            # print("send to: " + number)
+            # print("content is: " + message)
+
+    contact_dict = db.contact_list_extractor()
+    for group in contact_dict:
+        if group == "admin":
+            question = "The daily message has been sent"
+            sub_list = contact_dict[group]
+            send_message_by_list(sub_list, question)
+
+        elif group == "user":
+            for user in contact_dict["user"]:
+                question = "Have you had any contact with " + user + " today Y/N\nIf yes, how many times?"
+                sub_list = contact_dict["user"][user]
+                send_message_by_list(sub_list, question)
 
     return "all message be sent"
 

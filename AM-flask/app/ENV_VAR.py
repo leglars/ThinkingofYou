@@ -14,7 +14,7 @@ SERVICE_EMAIL_ACCOUNT = {
 
     "backupEmailAccount": {
         "account": "leglars@gmail.com",
-        "password": "1936887IWMzy",
+        "password": "1936887IWMuq",
         "host": "smtp.gmail.com",
         "port": 587,
     }

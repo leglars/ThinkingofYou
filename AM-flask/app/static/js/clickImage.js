@@ -14,6 +14,7 @@ $(document).ready(function () {
 
     photo.click(function () {
         maskStatus.disableClick();
+        console.log("mask disabled");
 
         var name = $(this).attr("alt").split(" ");  // alt stores the note of photo
         var contact = name[0];
@@ -30,6 +31,7 @@ $(document).ready(function () {
         $.post(
             "/thinkingofyou", query)
             .done(function (data) {
+                console.log(data);
                 if (data == "success") {
                     // toastNotification will release the mask
                     thinkingofyouMessageStatus.successNotification();
@@ -41,18 +43,17 @@ $(document).ready(function () {
                 POST_ERROR_TIME ++;
                 systemError.postErrorReport(query);
                 thinkingofyouMessageStatus.failNotification();
-          })
+            })
 
     });
 });
 
-var mask = $("#mask");
 var maskStatus = {
     disableClick: function () {
-        $(mask).show()
+        $("#mask").show()
     },
     enableClick: function () {
-        $(mask).hide()
+        $("#mask").hide()
     }
 };
 
@@ -96,7 +97,10 @@ var thinkingofyouMessageStatus = {
                     }, {
                         duration: 500,
                         easing: "easeInOutQuint",
-                        complete: maskStatus.enableClick()
+                        complete: maskStatus.enableClick(),
+                        done: function() {
+                            console.log("mask enabled")
+                        }
                     })
             }, delay)
         }
