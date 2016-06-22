@@ -1,9 +1,8 @@
 {% include "header.html" %}
-<script src="../static/js/clickImage.js"></script>
 
 
 <div class="container">
-    <div class="row">
+    <div class="row row-margin">
         <div class="col-lg-6">
             <img id="alis" src="../static/img/user/trish/Alison.jpg" alt="Alison Photo" class="img-thumbnail">
         </div>
@@ -11,7 +10,8 @@
             <img id="alis" src="../static/img/user/trish/David.jpg" alt="David Photo" class="img-thumbnail">
         </div>
     </div>
-    <div class="row">
+
+    <div class="row row-margin">
         <div class="col-lg-6">
             <img id="alis" src="../static/img/user/trish/Paula.jpg" alt="Paula Photo" class="img-thumbnail">
         </div>
@@ -20,6 +20,13 @@
         </div>
     </div>
 
-    {% include "notification.html" %}
+    <div id="mask"></div>
+
+    <div class="center-block">
+        <div id="notification" class="vertical-align text-center">
+            <p id="successFeedback" class="notification-text">Thanks for letting me know!</p>
+            <p id="failFeedback" class="notification-text">Sorry, Please touch again!</p>
+        </div>
+    </div>
 </div>
 {% include "footer.html"%}
