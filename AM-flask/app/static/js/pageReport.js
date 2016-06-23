@@ -24,7 +24,7 @@ var pageEventLogger = {
     },
 
     reloadLogger: function() {
-        $.post("/device/report/reload", {
+        $.post("/device/report/page/reload", {
             username: this.getUsername(),
             datetime: this.getDatetime()})
             .done(function(data) {})
@@ -32,7 +32,25 @@ var pageEventLogger = {
     },
 
     pageStatusReporter: function() {
+        $.post("/device/report/page/status", {
+            username: this.getUsername(),
+            visibilityStatus: document.visibilityState,
+            datetime: this.getDatetime()})
+            .done(function(data) {})
+            .always()
     }
 };
 
 
+// the page is still working
+
+// minimize or change tab
+document.addEventListener("visibilitychange", function() {
+    console.log(document.visibilityState);
+    //if(document.hidden) {
+    //    pageEventLogger.pageStatusReporter()
+    //}else{
+    //    pageEventLogger.pageStatusReporter()
+    //}
+    pageEventLogger.pageStatusReporter()
+}, false);

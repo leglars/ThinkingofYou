@@ -122,3 +122,9 @@ def error_toy_message_sending_fail(username, to_number=_ADMIN_NUMBER):
 def error_toy_email_sending_fail(email, to_number=_ADMIN_NUMBER):
     warning = "WARNING: " + email + " can't be reached!"
     return send_message(to_number, warning)
+
+
+def error_device_page_hidden(username, to_number=_ADMIN_NUMBER):
+    warning = "WARNING: " + username + "'s page be hidden!"
+    return send_message(to_number, warning)
+

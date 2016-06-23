@@ -304,5 +304,34 @@ def page_reload_logger(username, datetime):
         "datetime": datetime
     }
 
-    query = "/logging/device/" + username + "/pageReload"
+    query = "/logging/toy/" + username
+    if is_new_toy_logging(query):
+        create_toy_logging(query)
+
+    query += "/device/" + generate_time_path_by_delta(get_days_delta(query)) + "/pageReload/originRecord"
+    fb.post(query, data)
+    account_reload_times(query)
+
+
+def account_reload_times(query_record):
+    query_reload = query_record.split("/originRecord")[0]
+    try:
+        times = len(fb.get(query_record, None))
+    except TypeError:
+        times = 1
+    fb.patch(query_reload, {"total": times})
+
+
+def page_visibility_status(username, visibility_status, datetime):
+    data = {
+        "visibilityStatus": visibility_status,
+        "datetime": datetime
+    }
+
+    query = "/logging/toy/" + username
+    if is_new_toy_logging(query):
+        create_toy_logging(query)
+
+    query += "/device/" + generate_time_path_by_delta(get_days_delta(query)) + "/pageStatus"
+
     fb.post(query, data)

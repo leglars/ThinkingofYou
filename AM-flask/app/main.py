@@ -66,11 +66,27 @@ def trish_page():
     return render_template("user_page.html")
 
 
-@app.route("/device/report/reload", methods=['GET', 'POST'])
+@app.route("/device/report/page/reload", methods=['GET', 'POST'])
 def reload_logging():
     username = request.values.get('username', None).title()
     datetime = request.values.get('datetime', None)
     log.page_reload_logger(username, datetime)
+    return "success"
+
+
+@app.route("/device/report/page/status", methods=['GET', 'POST'])
+def page_hidden_warning():
+    username = request.values.get('username', None).title()
+    visibilityStatus = request.values.get('visibilityStatus', None)  # "hidden" or "visible"
+    datetime = request.values.get('datetime', None)
+
+    if visibilityStatus == "hidden":
+        # send_sms.error_device_page_hidden(username)
+        print("page be hidden")
+        log.page_visibility_status(username, visibilityStatus, datetime)
+    else:
+        log.page_visibility_status(username, visibilityStatus, datetime)
+
     return "success"
 
 ################### ToY End ############################
