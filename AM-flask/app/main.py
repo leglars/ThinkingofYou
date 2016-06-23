@@ -66,6 +66,13 @@ def trish_page():
     return render_template("user_page.html")
 
 
+@app.route("/device/report/reload", methods=['GET', 'POST'])
+def reload_logging():
+    username = request.values.get('username', None).title()
+    datetime = request.values.get('datetime', None)
+    log.page_reload_logger(username, datetime)
+    return "success"
+
 ################### ToY End ############################
 
 ################### Daily Message ######################

@@ -294,3 +294,15 @@ def create_toy_logging(query):
 
 def get_total_times(query):
     return fb.get(query + "/total", None)
+
+
+################################################################
+# page and device status logger
+
+def page_reload_logger(username, datetime):
+    data = {
+        "datetime": datetime
+    }
+
+    query = "/logging/device/" + username + "/pageReload"
+    fb.post(query, data)
