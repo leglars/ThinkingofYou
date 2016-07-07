@@ -67,12 +67,12 @@ def trish_page():
 
 
 @app.route("/user/roy")
-def trish_page():
+def roy_page():
     return render_template("roy_page.html")
 
 
 @app.route("/user/ollio")
-def trish_page():
+def ollio_page():
     return render_template("ollio_page.html")
 
 
@@ -107,10 +107,11 @@ def page_hidden_warning():
 def send_message():
 
     def send_message_by_list(contacts_list):
-        for number in contacts_list:
-            question = question_selector(db.get_contact_name_and_username_by_number(number))
-            res = send_sms.send_message(number, question)
-            # print("number: " + number + "\n" + question)
+        for num in contacts_list:
+            if num:
+                question = question_selector(db.get_contact_name_and_username_by_number(num))
+                res = send_sms.send_message(number, question)
+                # print("number: " + num + "\n" + question)
 
     def question_selector(contact_name_and_username_tuple):
         contact_name, username = contact_name_and_username_tuple

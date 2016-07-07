@@ -3,6 +3,20 @@
     height: 336px;
 }
 
+#roy .img-thumbnail {
+    width: 700px;
+    height: 600px;
+}
+
+#ollio .img-thumbnail {
+    height: 600px;
+}
+
+#roy .center {
+    padding-left: 200px;
+    /* a fake center*/
+}
+
 .row-margin {
     margin: 36px 0;
 }
