@@ -66,6 +66,16 @@ def trish_page():
     return render_template("user_page.html")
 
 
+@app.route("/user/roy")
+def trish_page():
+    return render_template("roy_page.html")
+
+
+@app.route("/user/ollio")
+def trish_page():
+    return render_template("ollio_page.html")
+
+
 @app.route("/device/report/page/reload", methods=['GET', 'POST'])
 def reload_logging():
     username = request.values.get('username', None).title()
