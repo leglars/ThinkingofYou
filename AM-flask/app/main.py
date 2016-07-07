@@ -36,16 +36,16 @@ def send_thinkingofyou_message():
     if db.is_toy_message_send_by_email(username, contact_name):
         contact_email = db.get_contact_email(username, contact_name)
         text = "I'am thinking of you, " + contact_name + "!\n \000\000--A message from " + username
-        # if not email.send_mail(contact_email, text):
-        email.send_mail(text=text)
+        email.send_mail(contact_email, text)
+        # email.send_mail(text=text)
 
         # print("Send email to: " + contact_email + "\n" + text)
         return "success"
 
     else:
         contact_number = db.get_contact_number(username, contact_name)
-        # res = send_sms.send_toy_message(contact_name, username, contact_number)
-        res = send_sms.send_toy_message(contact_name, username)
+        res = send_sms.send_toy_message(contact_name, username, contact_number)
+        # res = send_sms.send_toy_message(contact_name, username)
         # print("I'am thinking of you!" + contact_name + "\nA message from " + username)
         return "success"
 
@@ -92,7 +92,6 @@ def page_hidden_warning():
 
     if visibilityStatus == "hidden":
         # send_sms.error_device_page_hidden(username)
-        print("page be hidden")
         log.page_visibility_status(username, visibilityStatus, datetime)
     else:
         log.page_visibility_status(username, visibilityStatus, datetime)
@@ -111,19 +110,18 @@ def send_message():
         for number in contacts_list:
             question = question_selector(db.get_contact_name_and_username_by_number(number))
             res = send_sms.send_message(number, question)
-            # print("send to: " + number)
-            # print("content is: " + message)
+            # print("number: " + number + "\n" + question)
 
     def question_selector(contact_name_and_username_tuple):
         contact_name, username = contact_name_and_username_tuple
         q = ""
         schedule_list = db.get_schedule(username)
-        week_number = log.generate_time_path_by_delta(log.get_days_delta("/logging/response/" + contact_name))
+        week_number = log.get_week_number(log.generate_time_path_by_delta(log.get_days_delta("/logging/response/" + contact_name)))
 
         if week_number <= schedule_list[0] or week_number > schedule_list[1]:
             q += "Have you had any contact with " + username + " today Y/N\nIf yes, how many times?"
         elif schedule_list[0] < week_number <= schedule_list[1]:
-            q += "Have you had any contact with " + username + " today Y/N\nIf yes, how many times?"
+            q += "Have you had any contact with " + username + " today by means other than 'Thinking of You' Y/N\nIf yes, how many times?"
 
         return q
 
@@ -133,6 +131,7 @@ def send_message():
             message = "The daily message has been sent"
             contact_list = contact_dict[group]
             for number in contact_list:
+                # print("number: " + number + "\n" + message)
                 res = send_sms.send_message(number, message)
 
         elif group == "user":

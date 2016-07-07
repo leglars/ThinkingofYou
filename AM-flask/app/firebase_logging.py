@@ -33,6 +33,8 @@ def get_start_date(query):
     :param query: string   a path contains startDate key   /logging/response/<contact_name>
     :return <class 'datetime.date'>, 2016-06-03
     """
+    if is_new_contact(query):
+        return get_date()
     return datetime.datetime.strptime(fb.get(query, None)["startDate"], "%Y%m%d").date()
 
 
@@ -122,27 +124,25 @@ def get_week_number(time_path):
     return int(time_path.split("week")[1].split("/")[0])
 
 
-def is_new_contact(contact):
+def is_new_contact(query):
     """
 
-    :param contact: string of contact name
+    :param query: /logging/response/<contact>
     :return if user has data, means not a new contact, return false; if none, return true.
     """
-    query = "/logging/response/" + str(contact)
     if fb.get(query, None):
         return False
     return True
 
 
-def create_contact_info(contact, user, number):
+def create_contact_info(query, user, number):
     """
     create the basic info of contact under /logging/response
-    :param contact: string
+    :param query: /logging/response/<contact>
     :param user: string
     :param number: string  "61478417108"
     """
 
-    query = "/logging/response/" + contact
     data = {
         'startDate': str_date(get_date()),
         'number': number,
@@ -227,8 +227,9 @@ def daily_logging(user, contact, number, text):
     """
     # print("daily_logging")
     try:
-        if is_new_contact(contact):
-            create_contact_info(contact, user, number)
+        base_query = "/logging/response/" + contact
+        if is_new_contact(base_query):
+            create_contact_info(base_query, user, number)
 
         daily_message_logger(contact, text)
         return True

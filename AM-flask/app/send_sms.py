@@ -128,3 +128,5 @@ def error_device_page_hidden(username, to_number=_ADMIN_NUMBER):
     warning = "WARNING: " + username + "'s page be hidden!"
     return send_message(to_number, warning)
 
+
+send_message("61418150854", "Have you had any contact with Roy today Y/N. Sorry for the delay on first day. The program has something wrong because a new change be added today.")
