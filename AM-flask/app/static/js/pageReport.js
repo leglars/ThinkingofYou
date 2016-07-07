@@ -3,14 +3,14 @@
  */
 
 //  reload this page
-var timeInterval = 8; // hours
+var timeInterval = 2; // hours
 var milliInterval = timeInterval * 3600 * 1000;
-console.log(milliInterval);
+//console.log(milliInterval);
 
 setTimeout(function() {
     pageEventLogger.reloadLogger();
     location.reload(true);
-}, 60000);
+}, milliInterval);
 
 var pageEventLogger = {
     getUsername: function() {
@@ -38,6 +38,10 @@ var pageEventLogger = {
             datetime: this.getDatetime()})
             .done(function(data) {})
             .always()
+    },
+
+    pageReset: function() {
+        location.reload(true);
     }
 };
 
@@ -47,10 +51,11 @@ var pageEventLogger = {
 // minimize or change tab
 document.addEventListener("visibilitychange", function() {
     console.log(document.visibilityState);
-    //if(document.hidden) {
-    //    pageEventLogger.pageStatusReporter()
-    //}else{
-    //    pageEventLogger.pageStatusReporter()
-    //}
-    pageEventLogger.pageStatusReporter()
+    if(document.hidden) {
+        pageEventLogger.pageStatusReporter()
+    }else{
+        pageEventLogger.pageStatusReporter();
+        pageEventLogger.pageReset()
+    }
+    //pageEventLogger.pageStatusReporter()
 }, false);
