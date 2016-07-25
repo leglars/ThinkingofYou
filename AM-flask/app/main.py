@@ -110,7 +110,7 @@ def send_message():
         for num in contacts_list:
             if num:
                 question = question_selector(db.get_contact_name_and_username_by_number(num))
-                res = send_sms.send_message(number, question)
+                res = send_sms.send_message(num, question)
                 # print("number: " + num + "\n" + question)
 
     def question_selector(contact_name_and_username_tuple):

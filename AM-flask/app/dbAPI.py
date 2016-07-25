@@ -93,3 +93,72 @@ def get_contact_name_and_username_by_number(number):
     return data["name"], data["user"]
 
 # print(contact_list_extractor())
+
+
+###################################################################
+
+WEEK_ORDER = ["week1", "week2", "week3", "week4", "week5", "week6", "week7"]
+DAY_ORDER = ["day1", "day2", "day3", "day4", "day5", "day6", "day7"]
+
+def get_daily_message_record(username):
+    contact_list = get_contacts(username)
+    data = {}
+    for contact in contact_list:
+        data[contact] = get_contact_daily_message_record(contact)
+    data["user"] = username
+    return data
+
+
+def get_contact_daily_message_record(contact):
+    query = "/logging/response/" + contact + "/dailyMessage"
+    dailyMessage = fb.get(query, None)
+
+    weekly_results = []
+    for week in range(len(dailyMessage)):
+        times = []
+        sub = 0
+        for day in DAY_ORDER:
+            try:
+                time = dailyMessage[WEEK_ORDER[week]][day]["times"]
+                sub += int(time)
+                times.append(time)
+            except KeyError:
+                continue
+        weekly_results.append((WEEK_ORDER[week], sub, times))
+    return weekly_results
+
+
+def get_contacts(username):
+    query = "/user/" + username + "/contact"
+    data = fb.get(query, None)
+    contact_list = []
+    for contact in data:
+        contact_list.append(contact)
+    return contact_list
+
+
+import csv
+
+
+def dailyMessage2CSV(data):
+    with open('data.csv', 'w') as csvfile:
+        writer = csv.writer(csvfile, delimiter=' ',
+                                quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(["Name", "Week", "Sub", "Original record"])
+    for d in data:
+        if d != "user":
+            csv += d + "," + record_transfer(data[d][0]) + "\n"
+            for i in range(1, len(data[d])):
+                csv += "," + record_transfer(data[d][i]) + "\n"
+    return csv
+
+
+def record_transfer(data):
+    week, sub, record = data
+    r = ""
+    for i in record:
+        r += str(i) + ","
+    result = week + "," + str(sub) + "," + r[:-1]
+    return result
+
+
